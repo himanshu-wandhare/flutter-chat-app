@@ -1,7 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/widgets/user_image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-final _firebase = FirebaseAuth.instance;
+// final _firebase = FirebaseAuth.instance;
+final _supabase = Supabase.instance.client;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -28,22 +31,42 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       if (_isLoginScreen) {
-        final userCredentials = await _firebase.signInWithEmailAndPassword(
+        // final userCredentials = await _firebase.signInWithEmailAndPassword(
+        //   email: _email,
+        //   password: _password,
+        // );
+        // print(userCredentials);
+
+        final AuthResponse res = await _supabase.auth.signInWithPassword(
           email: _email,
           password: _password,
         );
+
+        final Session? session = res.session;
+        final User? user = res.user;
       } else {
-        final userCredentials = await _firebase.createUserWithEmailAndPassword(
+        final AuthResponse res = await _supabase.auth.signUp(
           email: _email,
           password: _password,
         );
+
+        final Session? session = res.session;
+        final User? user = res.user;
+
+        // final userCredentials = await _firebase.createUserWithEmailAndPassword(
+        //   email: _email,
+        //   password: _password,
+        // );
+        // print(userCredentials);
       }
-    } on FirebaseAuthException catch (error) {
+      // } on FirebaseAuthException catch (error) {
+    } on AuthException catch (error) {
       if (error.code == 'email-already-in-use') {
       } else {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message ?? "Authentication Failed")),
+          // SnackBar(content: Text(error.message ?? "Authentication Failed")),
+          SnackBar(content: Text(error.message)),
         );
       }
     }
@@ -73,11 +96,12 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    key: _form,
                     child: Form(
+                      key: _form,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (!_isLoginScreen) const UserImagePicker(),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: "Email Address",
