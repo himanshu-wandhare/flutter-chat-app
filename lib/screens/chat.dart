@@ -1,5 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/widgets/chat_messages.dart';
+import 'package:flutter_chat_app/widgets/new_message.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -12,10 +14,9 @@ class ChatScreen extends StatelessWidget {
         title: const Text("FlutterChat"),
         actions: [
           IconButton(
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              // await FirebaseAuth.instance.signOut();
-            },
+            onPressed:
+                () async => await Supabase.instance.client.auth.signOut(),
+            // await FirebaseAuth.instance.signOut();
             icon: Icon(
               Icons.exit_to_app,
               color: Theme.of(context).colorScheme.primary,
@@ -23,7 +24,9 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Column(children: [Text("Chat Screen")]),
+      body: const Column(
+        children: [Expanded(child: ChatMessages()), NewMessage()],
+      ),
     );
   }
 }
