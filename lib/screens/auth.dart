@@ -65,10 +65,11 @@ class _AuthScreenState extends State<AuthScreen> {
         final Session? session = res.session;
         final User? user = res.user;
 
-        final imagePath = await _supabase.storage
+        final imagePath = 'user_images/${user!.id}.jpg';
+        await _supabase.storage
             .from(databaseName!)
             .upload(
-              'user_images/${user!.id}.jpg',
+              imagePath,
               _avatarImage!,
               fileOptions: const FileOptions(
                 cacheControl: '3600',
@@ -87,6 +88,9 @@ class _AuthScreenState extends State<AuthScreen> {
         // );
         // print(userCredentials);
       }
+      setState(() {
+        _isAuthenticating = false;
+      });
       // } on FirebaseAuthException catch (error) {
     } on AuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -97,7 +101,6 @@ class _AuthScreenState extends State<AuthScreen> {
           SnackBar(content: Text(error.message)),
         );
       }
-    } finally {
       setState(() {
         _isAuthenticating = false;
       });
