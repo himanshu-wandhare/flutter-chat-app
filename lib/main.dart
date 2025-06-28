@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_chat_app/screens/auth.dart';
 import 'package:flutter_chat_app/screens/chat.dart';
 import 'package:flutter_chat_app/screens/splash.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:flutter_chat_app/firebase_options.dart';
+
 // import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['ANON_KEY']!,
@@ -34,7 +36,7 @@ class App extends StatelessWidget {
         ),
       ),
       home: StreamBuilder<AuthState>(
-        // stream: FirebaseAu0th.instance.authStateChanges(),
+        // stream: FirebaseAuth.instance.authStateChanges(),
         stream: Supabase.instance.client.auth.onAuthStateChange,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

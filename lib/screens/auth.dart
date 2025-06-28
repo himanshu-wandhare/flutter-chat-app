@@ -49,20 +49,16 @@ class _AuthScreenState extends State<AuthScreen> {
         // );
         // print(userCredentials);
 
-        final AuthResponse res = await _supabase.auth.signInWithPassword(
+        await _supabase.auth.signInWithPassword(
           email: _email,
           password: _password,
         );
-
-        final Session? session = res.session;
-        final User? user = res.user;
       } else {
         final AuthResponse res = await _supabase.auth.signUp(
           email: _email,
           password: _password,
         );
 
-        final Session? session = res.session;
         final User? user = res.user;
 
         final imagePath = 'user_images/${user!.id}.jpg';
